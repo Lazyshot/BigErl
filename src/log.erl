@@ -27,5 +27,5 @@ logInfo(Info) ->
 	printMsg(info, Info).
 
 logDebug(Debug) ->
-	writeMsg(debug, Debug),
+	%writeMsg(debug, Debug),
 	printMsg(debug, Debug).	

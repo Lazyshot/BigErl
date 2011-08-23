@@ -19,36 +19,6 @@ registerRegions(Master, [_Region | _Regions]) ->
 	%%_MRegion = #region{node=Master},
 	Master.
 
-splitRegion(Master, Region) ->
-	RegionList = ets:tab2list(Region),
-	{NewRegion1, NewRegion2} = lists:split(length(RegionList), RegionList),
-	registerRegions(Master, [NewRegion1, NewRegion2]).
-
-loadRegions(Config) ->
-	DataPath = config:getValue(Config, data_path),
-	case file:list_dir(DataPath) of
-		{ok, Files} ->
-			loadRegions(Files, []);
-		{error, Reason} ->
-			log:logError(Reason)
-	end.
-
-loadRegions([], Acc) ->
-	Acc;
-
-loadRegions([DataFile | Rest], Acc) ->
-	Index = string:rstr(DataFile, ".dts"),
-	if
-		Index > 0 ->
-			hashtable:loadTable(DataFile),
-			NewAcc = [string:sub_string(DataFile, 1, Index - 1) | Acc];
-		
-		true ->
-			NewAcc = Acc
-	end,
-	
-	loadRegions(Rest, NewAcc).
-
 %% Startup procedure
 startSlave(ConfigFile, Cookie) ->
 	
@@ -64,7 +34,7 @@ startSlave(ConfigFile, Cookie) ->
 	
 	{master, Master} ! {registerNode, Node},
 	
-	registerRegions(Master, loadRegions(Config)),
+	registerRegions(Master, Config),
 	
 	waitForCommands(Config, Node, Master).
 

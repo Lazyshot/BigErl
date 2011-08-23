@@ -67,8 +67,8 @@ startReceiving(Config) ->
 	log:logInfo("Iterate Receive"),
 	
 	receive
-		%Receive from API Call - Client
-		%{Table, RowKey, [Column]}
+		%% Receive from API Call - Client
+		%% Get rows or specific column
 		{get, Client, Session, Query} ->
 			case findSlaveByRowKey(Query#qry.table, Query#qry.row) of
 				false ->
